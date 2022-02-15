@@ -32,7 +32,8 @@ function getPersonData(data){
             city : person.location.city,
             state : person.location.state,
             zip : person.location.postcode,
-            birthday : `${person.dob.date.substring(5,7)}/${person.dob.date.substring(8,10)}/${person.dob.date.substring(0,4)}`
+            birthday : `${person.dob.date.substring(5,7)}/${person.dob.date.substring(8,10)}/${person.dob.date.substring(0,4)}`,
+            picture : person.picture.large
         };
         employees.push(personData);
         
@@ -40,14 +41,23 @@ function getPersonData(data){
     return employees;
 }
 
+
 function createEmployeeCards(data){
     const employees = getPersonData(data);
-    
-    for(let i = 0; i < employees.length; i++){
-        console.log(employees[i].gender);
-    }
-
     const gallery = document.getElementById('gallery');
-
+    let html = '';
+    for(let employee of employees){   
+        html += '<div class="card">';
+        html += '<div class="card-img-container">';
+        html += `<img class="card-img" src='${employee.picture}' alt="profile picture">`;
+        html += '</div>';
+        html += '<div class="card-info-container">';
+        html += `<h3 id= class="card-name cap">${employee.firstName} ${employee.lastName}</h3>`;
+        html += `<p class="card-text">${employee.email}</p>`;
+        html += `<p class="card-text cap">${employee.city}, ${employee.state}</p>`;
+        html += '</div>';
+        html += '</div>';
+    }
+    gallery.insertAdjacentHTML('beforeend', html);
 }
 
