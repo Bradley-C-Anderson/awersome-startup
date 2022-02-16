@@ -1,11 +1,17 @@
 const gallery = document.getElementById('gallery');
 const body = document.getElementsByTagName('body');
 
+//fetchData call will go get 12 random people from the U.S. and return that result with JSON data.
 fetchData('https://randomuser.me/api/?nat=us&results=12')
     .then(data => createEmployeeCards(data.results))
     .then(createButtonListeners)
     .catch(error => console.log('Something went wrong', error))
 
+/**
+ * Will fetch data from JSON file, parse the response and check for errors.
+ *
+ * @param {url} the url to fetch data from.
+ */
 function fetchData(url){
     return fetch(url)
             .then(checkStatus)
@@ -13,6 +19,12 @@ function fetchData(url){
             .catch(error => console.log('Looks like a problem', error))
 }
 
+/**
+ * Returns the resolve response of the Promise if response.ok is true 
+ * Otherwise it returns the rejecting statusText.
+ * @param {Promise response} the response from Promise
+ * @return {Promise response} The response of the Promise if response.ok is true, error status if false.
+ */
 function checkStatus(response) {
     if(response.ok){
       return Promise.resolve(response);
@@ -21,6 +33,12 @@ function checkStatus(response) {
     }
   }
     
+/**
+ * Takes the data from JSON fetch and parses it to personData object. These objects are put returned in employees array.
+ *
+ * @param {JSON data} JSON file with data on random employees
+ * @return {Object array} returns employee data needed in an Object array.
+ */
 function getPersonData(data){
     employees = [];
     for(let i = 0; i < data.length; i++){
@@ -44,6 +62,12 @@ function getPersonData(data){
     }
     return employees;
 }
+
+/**
+ * Create the employee cards and employee modals, then adds them to the DOM. 
+ *
+ * @param {Promise data.results} Takes the data, calls getPersonalData to create Object array.
+ */
 
 function createEmployeeCards(data){
     const employees = getPersonData(data);
@@ -89,6 +113,9 @@ function createEmployeeCards(data){
     
 }
 
+/**
+ * Creates button listeners for opening employee modals, closing modals, next button on modal, prev button on modal.
+ */
 function createButtonListeners(){
     const modalCards = document.getElementsByClassName('modal-container');
     const cards = document.getElementsByClassName('card');
