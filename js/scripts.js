@@ -1,13 +1,15 @@
-//let modalArray = [];
 const gallery = document.getElementById('gallery');
 const body = document.getElementsByTagName('body');
 
+fetchData('https://randomuser.me/api/?nat=us&results=12')
+    .then(data => createEmployeeCards(data.results))
+    .then(createButtonListeners)
+    .catch(error => console.log('Something went wrong', error))
 
 function fetchData(url){
     return fetch(url)
             .then(checkStatus)
             .then(response => response.json())
-            //.then (res => res.json())
             .catch(error => console.log('Looks like a problem', error))
 }
 
@@ -18,11 +20,6 @@ function checkStatus(response) {
       return Promise.reject(new Error(response.statusText));
     }
   }
-
-fetchData('https://randomuser.me/api/?nat=us&results=12')
-    .then(data => createEmployeeCards(data.results))
-    .then(createButtonListeners)
-    .catch(error => console.log('Something went wrong', error))
     
 function getPersonData(data){
     employees = [];
@@ -75,7 +72,7 @@ function createEmployeeCards(data){
         modal += `<p class="modal-text">${employee.email}</p>`;
         modal += `<p class="modal-text cap">${employee.city}</p>`;
         modal += `<hr>`;
-        modal += `<p class="modal-text">${employee.cell}</p>`;
+        modal += `<p class="modal-text">${employee.cell.substring(0,5)} ${employee.cell.substring(6)}</p>`;
         modal += `<p class="modal-text">${employee.streetNumber} ${employee.streetName}, ${employee.city}, ${employee.state} ${employee.zip}</p>`;
         modal += `<p class="modal-text">Birthday: ${employee.birthday}</p>`;
         modal += `</div>`;
@@ -85,9 +82,6 @@ function createEmployeeCards(data){
         modal += `<button type="button" id="modal-next" class="modal-next btn">Next</button>`;
         modal += `</div>`;
         modal += `</div>`;
-
-        
-        //modalArray.push(modal);
     }
     
     gallery.insertAdjacentHTML('beforeend', html);
@@ -97,7 +91,7 @@ function createEmployeeCards(data){
 
 function createButtonListeners(){
     const modalCards = document.getElementsByClassName('modal-container');
-    let cards = document.getElementsByClassName('card');
+    const cards = document.getElementsByClassName('card');
     const closeModal = document.getElementsByClassName('modal-close-btn');
     const nextButton = document.getElementsByClassName('modal-next');
     const prevButton = document.getElementsByClassName('modal-prev');
@@ -105,64 +99,67 @@ function createButtonListeners(){
     //when click on card from main page, will show employee modal
     for(let i = 0; i < cards.length; i++){
         cards[i].addEventListener('click', e => {
-            console.log(modalCards[i].style.display = 'block');
+            modalCards[i].style.display = 'block';
         })
     }
 
     //when click on X in modal, will close modal
     for(let i = 0; i < closeModal.length; i++){
         closeModal[i].addEventListener('click', e => {
-            for(let j = 0; j < closeModal.length; j++){
-                if(modalCards[j].style.display === 'block'){
-                    console.log('clicked X')
-                    modalCards[i].style.display = 'none';
-                }
-            }
+            closeModalCards(modalCards, i);
         })
     }
 
     //when click on the next button in modal, will go to the next modal
     for(let i = 0; i < nextButton.length; i++){
         nextButton[i].addEventListener('click', e => {
-            console.log('clicked next');
-            for(let j = 0; j < modalCards.length; j++){
-                if(modalCards[j].style.display === 'block'){
-                    modalCards[i].style.display = 'none';
-                    if(i < nextButton.length -1){
-                        modalCards[i + 1].style.display = 'block';
-                    } else {
-                        modalCards[0].style.display = 'block';
-                    }
-                    
-                }
-            }
+            clickNextButton(modalCards, i);
         })
     }
 
     //when click on the prev button in modal, will go to the prev modal
     for(let i = 0; i < prevButton.length; i++){
         prevButton[i].addEventListener('click', e => {
-            console.log('clicked prev');
-            for(let j = 0; j < modalCards.length; j++){
-                if(modalCards[j].style.display === 'block'){
-                    modalCards[i].style.display = 'none';
-                    if(i > 0){
-                        modalCards[i - 1].style.display = 'block';
-                    } else {
-                        modalCards[modalCards.length - 1].style.display = 'block';
-                    }
-                    
-                }
-            }
+            clickPrevButton(modalCards, i)
         })
     }
 
+    //Helper functions for buttonListeners
 
+    function closeModalCards(modalCards, i){
+        for(let j = 0; j < modalCards.length; j++){
+            if(modalCards[j].style.display === 'block'){
+                modalCards[i].style.display = 'none';
+            }
+        }
+    }
 
+    function clickNextButton(modalCards, i){
+        for(let j = 0; j < modalCards.length; j++){
+            if(modalCards[j].style.display === 'block'){
+                modalCards[i].style.display = 'none';
+                if(i < modalCards.length -1){
+                    modalCards[i + 1].style.display = 'block';
+                } else {
+                    modalCards[0].style.display = 'block';
+                }
+            }
+        }
+    }
 
-
-
-}
+    function clickPrevButton(modalCards, i){
+        for(let j = 0; j < modalCards.length; j++){
+            if(modalCards[j].style.display === 'block'){
+                modalCards[i].style.display = 'none';
+                if(i > 0){
+                    modalCards[i - 1].style.display = 'block';
+                } else {
+                    modalCards[modalCards.length - 1].style.display = 'block';
+                }
+            }
+        }
+    }
+}//end of create buttonListeners()
 
 
 
